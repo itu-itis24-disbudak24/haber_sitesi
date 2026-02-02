@@ -1,9 +1,9 @@
 [
   {
-    "title": "Başlıksız Haber",
-    "content": "İçerik yok.",
+    "title": "{ $json.title }",
+    "content": "{ $json.description }",
     "image": "[]",
-    "publishDate": "2026-02-02T15:48:22.485Z",
+    "publishDate": "2026-02-02T15:50:43.061Z",
     "originalLink": "[]"
   }
 ]
