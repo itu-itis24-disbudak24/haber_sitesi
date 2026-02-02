@@ -1,1 +1,70 @@
-\n<!DOCTYPE html>\n<html lang=\"tr\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Haber Merkezi | Güncel ve Güvenilir Haberler</title>\n    \n    <!-- SEO Optimizasyonu (Turkish) -->\n    <meta name=\"description\" content=\"Türkiye ve dünyadan son dakika gelişmeleri, ekonomi, spor, siyaset ve teknoloji haberlerini anında takip edin.\">\n    <meta name=\"keywords\" content=\"haber, son dakika, Türkiye haberleri, güncel, ekonomi, spor, teknoloji\">\n    <meta name=\"author\" content=\"Haber Merkezi Geliştirici Ekibi\">\n    <link rel=\"canonical\" href=\"https://www.haber-merkezi.com\">\n    \n    <link rel=\"stylesheet\" href=\"styles.css\">\n    <!-- Google Fonts - Modern Görünüm İçin -->\n    <link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap\" rel=\"stylesheet\">\n</head>\n<body>\n\n    <!-- Üst Kısım (Header) -->\n    <header class=\"header\">\n        <div class=\"container\">\n            <div class=\"logo\">\n                <h1>HABER MERKEZİ</h1>\n            </div>\n            <nav class=\"main-nav\">\n                <ul>\n                    <li><a href=\"#anasayfa\" class=\"nav-link active\">Ana Sayfa</a></li>\n                    <li><a href=\"#son-dakika\" class=\"nav-link\">Son Dakika</a></li>\n                    <li><a href=\"#ekonomi\" class=\"nav-link\">Ekonomi</a></li>\n                    <li><a href=\"#spor\" class=\"nav-link\">Spor</a></li>\n                    <li><a href=\"#iletisim\" class=\"nav-link\">İletişim</a></li>\n                </ul>\n            </nav>\n        </div>\n    </header>\n\n    <!-- Ana İçerik Alanı -->\n    <main class=\"main-content container\">\n        <!-- Haber Başlık Alanı -->\n        <section class=\"hero-section\">\n            <h2>Günün Öne Çıkan Manşetleri</h2>\n            <p>Tüm gelişmelerden ilk siz haberdar olun.</p>\n        </section>\n\n        <!-- Haber Kartlarının Yükleneceği Alan -->\n        <section id=\"news-grid\" class=\"news-grid\">\n            <!-- Haber kartları buraya JavaScript ile yüklenecek -->\n            <div class=\"loading-indicator\">Haberler Yükleniyor...</div>\n        </section>\n    </main>\n\n    <!-- Alt Bilgi (Footer) -->\n    <footer class=\"footer\">\n        <div class=\"container\">\n            <div class=\"footer-nav\">\n                <a href=\"#\">Künye</a>\n                <a href=\"#\">Gizlilik Politikası</a>\n                <a href=\"#\">Reklam</a>\n                <a href=\"#\">RSS</a>\n            </div>\n            <p>&copy; 2024 Haber Merkezi. Tüm hakları saklıdır. Tasarım ve Geliştirme: Web Uzmanları</p>\n        </div>\n    </footer>\n\n    <script src=\"script.js\"></script>\n</body>\n</html>\n
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Güncel Haberler - Türkiye'nin En Yeni Haber Kaynağı</title>
+    <!-- SEO Meta Etiketleri -->
+    <meta name="description" content="Türkiye ve dünyadan en güncel, son dakika haberleri, ekonomi, siyaset, spor ve teknoloji gelişmeleri tek adreste.">
+    <meta name="keywords" content="haber, son dakika, güncel, türkiye, politika, ekonomi, spor">
+    <meta name="author" content="Uzman Web Geliştirici">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google Fonts: Roboto or similar clean font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Başlık Kısmı (Header) -->
+    <header class="site-header">
+        <div class="container header-content">
+            <div class="logo">
+                <h1><a href="index.html">GÜNDEM 24</a></h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#anasayfa" class="active">Ana Sayfa</a></li>
+                    <li><a href="#">Ekonomi</a></li>
+                    <li><a href="#">Siyaset</a></li>
+                    <li><a href="#">Spor</a></li>
+                    <li><a href="#">Teknoloji</a></li>
+                    <li><a href="#">Yazarlar</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Ana İçerik Alanı -->
+        <section id="haberler-listesi" class="news-grid">
+            <!-- Haber kartları JavaScript ile buraya eklenecek -->
+            <h2 class="section-title">Günün Öne Çıkan Başlıkları</h2>
+        </section>
+
+        <!-- Dinamik Haber Ekleme Alanı (Geliştirici Amaçlı) -->
+        <section class="dev-tools">
+            <h3>Geliştirici Paneli (JS ile yeni haber ekle)</h3>
+            <button id="addArticleBtn">Rastgele Yeni Haber Ekle</button>
+        </section>
+    </main>
+
+    <!-- Alt Bilgi (Footer) -->
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <div class="footer-info">
+                <h4>Gündem 24 Haber Portalı</h4>
+                <p>&copy; 2024 Tüm Hakları Saklıdır.</p>
+                <p>İletişim: info@gundem24.com</p>
+            </div>
+            <div class="footer-links">
+                <ul>
+                    <li><a href="#">Künye</a></li>
+                    <li><a href="#">Gizlilik Politikası</a></li>
+                    <li><a href="#">Kullanım Koşulları</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
