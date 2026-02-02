@@ -1,1 +1,93 @@
-\n// script.js\n\ndocument.addEventListener('DOMContentLoaded', () => {\n    const newsGrid = document.getElementById('news-grid');\n    const loadingIndicator = document.querySelector('.loading-indicator');\n\n    /**\n     * Tarih formatlayıcı fonksiyonu (YYYY-MM-DD -> DD.MM.YYYY)\n     * @param {string} dateString - YYYY-MM-DD formatında tarih\n     * @returns {string} Formatlanmış tarih\n     */\n    const formatDate = (dateString) => {\n        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };\n        // UTC bazlı yorumlama sorunlarını önlemek için\n        const date = new Date(dateString + 'T00:00:00'); \n        return date.toLocaleDateString('tr-TR', options);\n    };\n\n    /**\n     * Verilen makale verileriyle bir HTML kartı oluşturur.\n     * @param {Object} article - Haber nesnesi\n     * @returns {string} Oluşturulan HTML kartı\n     */\n    const createArticleCard = (article) => {\n        // Basit bir tıklama olay simülasyonu (Gerçek bir sitede buraya router veya detay sayfası linki gelir)\n        const handleClick = `alert('Haber Detayına Yönlendiriliyor: ${article.title.substring(0, 30)}...')`;\n\n        return `\n            <article class=\"article-card\" onclick=\"${handleClick}\">\n                <a href=\"#\" class=\"article-image\">\n                    <img src=\"${article.image}\" alt=\"${article.title}\">\n                </a>\n                <div class=\"article-content\">\n                    <h3 class=\"article-title\">${article.title}</h3>\n                    <p class=\"article-summary\">${article.summary}</p>\n                    <div class=\"article-meta\">\n                        <span class=\"article-category\">${article.category}</span>\n                        <span class=\"article-date\">${formatDate(article.date)}</span>\n                    </div>\n                </div>\n            </article>\n        `;\n    };\n\n    /**\n     * Haberleri JSON dosyasından çeker ve sayfaya dinamik olarak ekler.\n     */\n    const loadArticles = async () => {\n        try {\n            // articles.json dosyasını Fetch API ile çekme\n            const response = await fetch('articles.json');\n            \n            if (!response.ok) {\n                throw new Error(`HTTP Hatası! Durum: ${response.status}`);\n            }\n\n            const articles = await response.json();\n            \n            // Yüklenme göstergesini gizle\n            if (loadingIndicator) {\n                loadingIndicator.style.display = 'none';\n            }\n\n            // Haberleri en yeniye göre sıralayalım (Tarih bazında)\n            articles.sort((a, b) => new Date(b.date) - new Date(a.date));\n\n            // Tüm kartları oluştur ve DOM'a ekle\n            const articleHTML = articles.map(createArticleCard).join('');\n            \n            if (newsGrid) {\n                newsGrid.innerHTML = articleHTML;\n            }\n\n            console.log(`${articles.length} adet haber başarıyla yüklendi.`);\n\n        } catch (error) {\n            console.error(\"Haberler yüklenirken bir sorun oluştu:\", error);\n            if (loadingIndicator) {\n                loadingIndicator.textContent = \"Haberler yüklenemedi. Lütfen daha sonra tekrar deneyin.\";\n                loadingIndicator.style.color = \"red\";\n            }\n        }\n    };\n\n    // Uygulama başladığında haberleri yükle\n    loadArticles();\n});\n
+// script.js
+
+document.addEventListener('DOMContentLoaded', () => {
+    const newsGrid = document.getElementById('haberler-listesi');
+    const addArticleBtn = document.getElementById('addArticleBtn');
+
+    // Haber verilerini yükleme fonksiyonu (Gerçek projede fetch kullanılır)
+    async function loadArticles() {
+        try {
+            // JSON dosyasını yükle. Yerel sunucuda çalıştırıldığında bu düzgün çalışır.
+            const response = await fetch('articles.json');
+            if (!response.ok) {
+                throw new Error(`HTTP hatası! Durum: ${response.status}`);
+            }
+            const articles = await response.json();
+            
+            // Haberleri ekrana yazdır
+            articles.forEach(article => renderArticle(article));
+
+        } catch (error) {
+            console.error("Haberler yüklenirken bir hata oluştu:", error);
+            newsGrid.innerHTML = `<p style="color: red; grid-column: 1 / -1;">Haberler yüklenemedi. Lütfen sunucu bağlantınızı kontrol edin.</p>`;
+        }
+    }
+
+    /**
+     * Tek bir haber kartını oluşturur ve DOM'a ekler.
+     * @param {object} article - Haber nesnesi
+     */
+    function renderArticle(article) {
+        const card = document.createElement('div');
+        card.classList.add('article-card');
+        // Rastgele ID ekleme (dinamik eklenenler için)
+        const articleId = article.id || Date.now(); 
+
+        const articleHTML = `
+            <a href="#haber-${articleId}" class="article-link" aria-label="${article.title} haberini oku">
+                <div class="article-image">
+                    <img src="${article.imageUrl}" alt="${article.title}">
+                </div>
+                <div class="article-content">
+                    <h3 class="article-title">${article.title}</h3>
+                    <p class="article-summary">${article.summary}</p>
+                    <div class="article-meta">
+                        <span class="article-date">${formatDate(article.date)}</span>
+                        <span class="article-category">${article.category || 'Genel'}</span>
+                    </div>
+                </div>
+            </a>
+        `;
+        
+        card.innerHTML = articleHTML;
+        newsGrid.appendChild(card);
+    }
+    
+    // Tarih formatlama fonksiyonu (YYYY-MM-DD -> DD.MM.YYYY)
+    function formatDate(dateString) {
+        if (!dateString) return 'Tarih Yok';
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        // Tarih formatını yerel Türkçeye çevirir
+        return new Date(dateString).toLocaleDateString('tr-TR', options);
+    }
+
+    // --- Dinamik Haber Ekleme Fonksiyonu (Geliştirici Özelliği) ---
+    addArticleBtn.addEventListener('click', () => {
+        addNewRandomArticle();
+    });
+
+    function addNewRandomArticle() {
+        const dummyData = {
+            id: Date.now(),
+            title: `Geliştirici Tarafından Eklenen Yeni Başlık ${Math.floor(Math.random() * 100)}`,
+            summary: `Bu içerik, ${formatDate(new Date().toISOString().split('T')[0])} tarihinde JavaScript ile dinamik olarak oluşturulmuştur.`,
+            imageUrl: `https://via.placeholder.com/600x400?text=Dinamik+Haber+${Math.floor(Math.random() * 1000)}`,
+            date: new Date().toISOString().split('T')[0],
+            category: "Gündem"
+        };
+        
+        // Yeni kartı en üste eklemek için prepend kullanıyoruz
+        const tempContainer = document.createElement('div');
+        renderArticle(dummyData);
+        
+        // Yeni eklenen kartı en başa taşımak için DOM manipülasyonu (append yerine prepend kullanılır)
+        const newCard = newsGrid.lastElementChild; // RenderArticle en son eklediği için
+        newsGrid.prepend(newCard);
+
+        alert("Yeni dinamik haber en üste eklendi!");
+    }
+
+
+    // Uygulama başlangıcı: Haberleri yükle
+    loadArticles();
+});
