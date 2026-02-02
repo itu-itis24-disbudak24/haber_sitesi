@@ -1,1 +1,9 @@
-$('Process Website Files').first().json.articlesJsonContent
+[
+  {
+    "title": null,
+    "content": null,
+    "image": "{ $json.image && $json.image.startsWith('http') ? $json.image : ($json.image ? 'https://www.medyaradar.com' + $json.image : '') }",
+    "publishDate": "2026-02-02T14:14:21.043Z",
+    "originalLink": "{ $json.link.startsWith('http') ? $json.link : 'https://www.medyaradar.com' + $json.link }"
+  }
+]
