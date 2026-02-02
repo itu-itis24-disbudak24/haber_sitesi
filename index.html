@@ -3,76 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Haber Merkezi | Son Dakika Haberler ve Gelişmeler</title>
-    
-    <!-- SEO Meta Etiketleri (Turkish) -->
-    <meta name="description" content="Türkiye ve dünyadan en güncel, son dakika haberleri, analizler ve özel içerikler. Teknoloji, spor, ekonomi ve kültür sanat haberleri burada.">
-    <meta name="keywords" content="son dakika, haberler, güncel haberler, spor, ekonomi, teknoloji, türkiye haber">
-    <meta name="author" content="Haber Merkezi Geliştirme Ekibi">
-    <link rel="canonical" href="https://www.habermerkezi.com">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:title" content="Haber Merkezi | Son Dakika Haberler">
-    <meta property="og:description" content="Türkiye ve dünyadan en güncel, son dakika haberleri.">
-    <meta property="og:type" content="website">
-    
-    <!-- Favicon (Placeholder) -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📰</text></svg>">
-    
-    <!-- Stylesheet -->
+    <title>Güncel Haberler</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
-    <!-- Üst Kısım (Header) -->
-    <header class="main-header">
+    <header>
         <div class="container">
-            <h1 class="logo"><a href="/">HABER MERKEZİ</a></h1>
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="#anasayfa" class="active">Ana Sayfa</a></li>
-                    <li><a href="#guncel">Güncel</a></li>
-                    <li><a href="#spor">Spor</a></li>
-                    <li><a href="#teknoloji">Teknoloji</a></li>
-                    <li><a href="#iletisim">İletişim</a></li>
-                </ul>
-            </nav>
+            <div class="logo">
+                <h1><i class="fas fa-newspaper"></i> Haber<span class="highlight">Akışı</span></h1>
+            </div>
+            <div class="date-display" id="current-date"></div>
         </div>
     </header>
 
-    <!-- Ana İçerik Alanı -->
-    <main class="container content-area">
+    <main class="container">
+        <h2 class="section-title">Son Dakika Gelişmeleri</h2>
         
-        <!-- Manşet Alanı -->
-        <section id="hero-banner">
-            <h2>Günün Öne Çıkan Başlıkları</h2>
-            <!-- Buraya dinamik olarak en önemli haber eklenebilir -->
-        </section>
-
-        <!-- Haber Kartları Grid Alanı -->
-        <section id="news-grid">
-            <!-- Haber kartları JavaScript ile buraya yüklenecek -->
-        </section>
-
-        <!-- Daha Fazla Yükle Butonu (Opsiyonel) -->
-        <div class="load-more-container">
-            <button id="loadMoreBtn" class="load-more-btn">Daha Fazla Haber Yükle</button>
+        <div id="news-grid" class="news-grid">
+            <div class="loading">Haberler yükleniyor...</div>
         </div>
     </main>
 
-    <!-- Alt Bilgi (Footer) -->
-    <footer class="main-footer">
+    <footer>
         <div class="container">
-            <p>&copy; <span id="currentYear"></span> Haber Merkezi. Tüm Hakları Saklıdır.</p>
-            <div class="footer-links">
-                <a href="#">Künye</a> |
-                <a href="#">Gizlilik Politikası</a> |
-                <a href="#">Yayın İlkeleri</a>
-            </div>
+            <p>&copy; 2026 HaberAkışı - Tüm Hakları Saklıdır.</p>
         </div>
     </footer>
 
-    <!-- JavaScript -->
     <script src="script.js"></script>
 </body>
 </html>
