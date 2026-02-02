@@ -1,88 +1,59 @@
-// newsData.json dosyasından haberleri yüklemek için asenkron fonksiyon
-async function loadArticles() {
-    const gridContainer = document.getElementById('news-grid');
-    const loadMoreBtn = document.getElementById('loadMoreBtn');
+document.addEventListener('DOMContentLoaded', () => {
+    // Tarihi Ayarla
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('current-date').textContent = new Date().toLocaleDateString('tr-TR', options);
+
+    // Haberleri Çek
+    fetchNews();
+});
+
+async function fetchNews() {
+    const grid = document.getElementById('news-grid');
     
     try {
-        // 1. JSON dosyasını fetch ediyoruz (Bu kısım sunucu ortamında düzgün çalışır. Eğer sadece yerel dosyadan okuyacaksanız 'fetch' yerine manuel veri tanımlaması gerekebilir, ancak modern yapı fetch gerektirir.)
-        const response = await fetch('articles.json');
-        if (!response.ok) {
-            throw new Error(`HTTP hatası! Durum: ${response.status}`);
-        }
+        // Cache sorununu önlemek için tarih parametresi ekledik
+        const response = await fetch('articles.json?t=' + new Date().getTime());
+        
+        if (!response.ok) throw new Error('Veri çekilemedi');
+        
         const articles = await response.json();
+        
+        // Yükleniyor yazısını temizle
+        grid.innerHTML = '';
 
-        let articlesDisplayed = 0;
-        const articlesPerLoad = 2; // Her seferinde yüklenecek haber sayısı
+        if (articles.length === 0) {
+            grid.innerHTML = '<p style="text-align:center; width:100%;">Henüz haber girilmemiş.</p>';
+            return;
+        }
 
-        // Tarih formatlama yardımcı fonksiyonu (YYYY-MM-DD -> DD.MM.YYYY)
-        const formatDate = (dateString) => {
-            if (!dateString) return 'Tarih Bilinmiyor';
-            const options = { year: 'numeric', month: 'long', day: 'numeric', dayPeriod: 'short' };
-            return new Date(dateString).toLocaleDateString('tr-TR', options);
-        };
-
-        // Haber kartını oluşturup döndüren fonksiyon
-        const createArticleElement = (article) => {
-            const card = document.createElement('article');
+        // Haberleri döngüyle oluştur
+        articles.forEach(article => {
+            const card = document.createElement('div');
             card.className = 'news-card';
-            card.innerHTML = `
-                <a href="#article-${article.id}" class="card-link">
-                    <div class="card-image">
-                        <img src="${article.imageUrl}" alt="${article.title}">
-                    </div>
-                    <div class="card-content">
-                        <span class="card-category">${article.category}</span>
-                        <h3 class="card-title">${article.title}</h3>
-                        <p class="card-summary">${article.summary}</p>
-                    </div>
-                    <div class="card-date">
-                        Yayınlanma Tarihi: ${formatDate(article.publishDate)}
-                    </div>
-                </a>
-            `;
-            return card;
-        };
-
-        // Başlangıçta ilk haberleri yükle
-        const loadInitialArticles = () => {
-            const articlesToDisplay = articles.slice(articlesDisplayed, articlesDisplayed + articlesPerLoad);
             
-            if (articlesToDisplay.length === 0) {
-                gridContainer.innerHTML = '<p>Yüklenecek daha fazla haber bulunmamaktadır.</p>';
-                loadMoreBtn.style.display = 'none';
-                return;
-            }
+            // Eğer resim yoksa varsayılan resim kullan
+            const imageSrc = article.image || 'https://via.placeholder.com/400x200?text=Haber';
 
-            articlesToDisplay.forEach(article => {
-                gridContainer.appendChild(createArticleElement(article));
-            });
-
-            articlesDisplayed += articlesToDisplay.length;
-
-            // Tüm haberler yüklendiyse butonu gizle
-            if (articlesDisplayed >= articles.length) {
-                loadMoreBtn.style.display = 'none';
-            }
-        };
-
-        // "Daha Fazla Yükle" butonuna tıklama olay dinleyicisi
-        loadMoreBtn.addEventListener('click', loadInitialArticles);
-
-        // Sayfa yüklendiğinde ilk grubu yükle
-        loadInitialArticles();
+            card.innerHTML = `
+                <img src="${imageSrc}" alt="${article.title}" class="news-img" onerror="this.src='https://via.placeholder.com/400x200?text=Resim+Yok'">
+                <div class="news-content">
+                    <div class="news-date"><i class="far fa-clock"></i> ${formatDate(article.publishDate)}</div>
+                    <h3 class="news-title">${article.title}</h3>
+                    <p class="news-excerpt">${article.content.substring(0, 100)}...</p>
+                    <a href="${article.originalLink}" target="_blank" class="read-more">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
 
     } catch (error) {
-        console.error("Haberler yüklenirken bir hata oluştu:", error);
-        gridContainer.innerHTML = `<p class="error-message">Haberler yüklenemedi. Lütfen daha sonra tekrar deneyin. (${error.message})</p>`;
-        loadMoreBtn.style.display = 'none';
+        console.error('Hata:', error);
+        grid.innerHTML = '<p style="text-align:center; color:red;">Haberler yüklenirken bir hata oluştu.</p>';
     }
 }
 
-// Sayfa yüklendiğinde çalışacak diğer fonksiyonlar
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Haberleri yükle
-    loadArticles();
-
-    // 2. Footer'daki yılı güncelle
-    document.getElementById('currentYear').textContent = new Date().getFullYear();
-});
+function formatDate(dateString) {
+    if(!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('tr-TR') + ' ' + date.toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'});
+}
