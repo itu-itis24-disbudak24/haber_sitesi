@@ -1,23 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Tarih Ayarı
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     document.getElementById('current-date').textContent = new Date().toLocaleDateString('tr-TR', options);
-
     fetchNews();
 });
 
 async function fetchNews() {
     const grid = document.getElementById('news-grid');
-    
     try {
-        // Cache önlemek için tarih parametresi ekledik
         const response = await fetch('articles.json?t=' + new Date().getTime());
         if (!response.ok) throw new Error('Veri çekilemedi');
-        
         const articles = await response.json();
         
-        grid.innerHTML = ''; // Yükleniyor yazısını temizle
-
+        grid.innerHTML = ''; 
         if (articles.length === 0) {
             grid.innerHTML = '<p style="text-align:center; width:100%;">Henüz haber girilmemiş.</p>';
             return;
@@ -27,18 +21,30 @@ async function fetchNews() {
             const card = document.createElement('div');
             card.className = 'news-card';
             
-            // Resim kontrolü
-            const imageSrc = (article.image && !article.image.startsWith('{')) ? article.image : 'https://via.placeholder.com/600x300?text=Haber';
+            // Resim yüklenemezse yedek resim göster
+            const img = new Image();
+            img.src = article.image;
+            img.className = 'news-img';
+            img.alt = article.title;
+            img.onerror = function() {
+                this.src = 'https://via.placeholder.com/600x300?text=Resim+Yüklenemedi';
+            };
 
-            // HTML Şablonu (Buton YOK, Tam Metin VAR)
+            // Buton Linki Kontrolü (Link yoksa butonu gizle)
+            const buttonHtml = (article.originalLink && article.originalLink !== '#') 
+                ? `<a href="${article.originalLink}" target="_blank" class="read-more">Kaynağa Git <i class="fas fa-external-link-alt"></i></a>`
+                : '';
+
+            // İçeriği kısalt (Özet göster)
+            const summary = article.content.length > 200 ? article.content.substring(0, 200) + '...' : article.content;
+
             card.innerHTML = `
-                <img src="${imageSrc}" alt="${article.title}" class="news-img" onerror="this.src='https://via.placeholder.com/600x300?text=Resim+Yok'">
+                <div class="news-img-container">${img.outerHTML}</div>
                 <div class="news-content">
                     <div class="news-date"><i class="far fa-clock"></i> ${formatDate(article.publishDate)}</div>
                     <h3 class="news-title">${article.title}</h3>
-                    <div class="news-full-text">
-                        ${formatContent(article.content)}
-                    </div>
+                    <p class="news-excerpt">${summary}</p>
+                    ${buttonHtml}
                 </div>
             `;
             grid.appendChild(card);
@@ -56,11 +62,4 @@ function formatDate(dateString) {
         const date = new Date(dateString);
         return date.toLocaleDateString('tr-TR') + ' ' + date.toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'});
     } catch(e) { return ''; }
-}
-
-// Paragrafları düzgün göstermek için yardımcı fonksiyon
-function formatContent(text) {
-    if (!text) return 'İçerik yok.';
-    // Satır başlarını <p> etiketiyle değiştirir
-    return '<p>' + text.replace(/\n/g, '</p><p>') + '</p>';
 }
