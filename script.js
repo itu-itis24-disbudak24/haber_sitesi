@@ -1,12 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Tarihi Ayarla (Türkçe Format)
+    // Tarihi ayarla
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const dateElement = document.getElementById('current-date');
-    if (dateElement) {
-        dateElement.textContent = new Date().toLocaleDateString('tr-TR', options);
-    }
+    const dateEl = document.getElementById('current-date');
+    if (dateEl) dateEl.textContent = new Date().toLocaleDateString('tr-TR', options);
     
-    // 2. Haberleri Çekmeye Başla
     fetchNews();
 });
 
@@ -14,104 +11,102 @@ async function fetchNews() {
     const grid = document.getElementById('news-grid');
     
     try {
-        // --- CACHE (ÖNBELLEK) ÇÖZÜMÜ ---
-        // '?t=' + new Date().getTime() ekleyerek tarayıcının eski dosyayı okumasını engelliyoruz.
-        // Her seferinde taze veri çekilir.
+        // Cache önlemek için zaman damgası ekliyoruz
         const response = await fetch('articles.json?t=' + new Date().getTime());
         
         if (!response.ok) {
-            throw new Error('JSON dosyası bulunamadı veya okunamadı.');
+            // Dosya yoksa (henüz oluşmadıysa)
+            grid.innerHTML = '<p style="text-align:center;">Henüz haber girilmemiş veya dosya oluşturuluyor.</p>';
+            return;
         }
         
-        const articles = await response.json();
-        
-        // Önceki yükleniyor yazısını temizle
-        grid.innerHTML = '';
+        // JSON'u okumaya çalış
+        let articles;
+        try {
+            articles = await response.json();
+        } catch (e) {
+            throw new Error('JSON dosyası bozuk veya hatalı formatta.');
+        }
 
-        // Eğer hiç haber yoksa mesaj göster
-        if (!articles || articles.length === 0) {
-            grid.innerHTML = '<p style="text-align:center; width:100%;">Henüz haber girilmemiş.</p>';
+        // Eğer gelen veri liste değilse (örn: { "articlesJsonContent": [...] } ise) düzelt
+        if (!Array.isArray(articles)) {
+            if (articles.articlesJsonContent) {
+                // İç içe geçmiş string ise parse et
+                try {
+                    articles = JSON.parse(articles.articlesJsonContent);
+                } catch (e) {
+                    // Belki direkt array'dir ama obje içindedir
+                    articles = Object.values(articles)[0]; 
+                }
+            }
+        }
+
+        // Hala dizi değilse hata ver
+        if (!Array.isArray(articles)) {
+            console.error('Gelen veri:', articles);
+            throw new Error('Veri formatı hatalı (Liste bekleniyordu).');
+        }
+
+        grid.innerHTML = ''; // Yükleniyor yazısını temizle
+
+        if (articles.length === 0) {
+            grid.innerHTML = '<p style="text-align:center;">Henüz haber yok.</p>';
             return;
         }
 
-        // --- HABER KARTLARINI OLUŞTURMA ---
+        // --- KARTLARI OLUŞTUR ---
         articles.forEach(article => {
             const card = document.createElement('div');
             card.className = 'news-card';
             
-            // --- RESİM KONTROLÜ ---
-            // Eğer resim linki "{...}" gibi kod içeriyorsa veya boşsa placeholder kullan
+            // 1. GÜVENLİ RESİM KONTROLÜ
             let imgUrl = article.image;
-            if (!imgUrl || imgUrl.startsWith('{') || imgUrl.length < 5) {
-                imgUrl = 'https://via.placeholder.com/600x300?text=Haber+Gorseli';
+            // Dizi geldiyse ilkin al
+            if (Array.isArray(imgUrl)) imgUrl = imgUrl[0];
+            // String değilse veya boşsa placeholder yap
+            if (!imgUrl || typeof imgUrl !== 'string' || imgUrl.length < 5 || imgUrl.startsWith('{')) {
+                imgUrl = 'https://via.placeholder.com/600x300?text=Gundem';
             }
 
-            // --- LİNK BUTONU KONTROLÜ ---
-            // Link boşsa veya hatalıysa '#' koy ama butonu yine de göster
+            // 2. GÜVENLİ LİNK KONTROLÜ (Çökme Engelleyici)
             let linkUrl = article.originalLink;
-            if (!linkUrl || linkUrl === '[]' || linkUrl.startsWith('{')) {
-                linkUrl = '#'; // Tıklanınca sayfanın başına atar
+            // Dizi geldiyse ilkini al (Sorunu çözen satır)
+            if (Array.isArray(linkUrl)) linkUrl = linkUrl[0];
+            // String değilse veya boşsa '#' yap
+            if (!linkUrl || typeof linkUrl !== 'string' || linkUrl.length < 2 || linkUrl.startsWith('{')) {
+                linkUrl = '#';
             }
 
-            // --- İÇERİK FORMATLAMA ---
-            // Satır sonlarını (Enter tuşunu) HTML paragraf boşluğuna çevirir (<br>)
-            const formattedContent = article.content 
-                ? article.content.replace(/\n/g, '<br><br>') 
-                : 'İçerik bulunamadı.';
+            // 3. İÇERİK KONTROLÜ
+            const content = article.content || "İçerik bulunamadı.";
 
-            // Kartın HTML yapısı
             card.innerHTML = `
                 <div class="news-img-container">
-                    <img 
-                        src="${imgUrl}" 
-                        alt="${article.title}" 
-                        class="news-img" 
-                        onerror="this.src='https://via.placeholder.com/600x300?text=Resim+Yuklenemedi'"
-                    >
+                    <img src="${imgUrl}" alt="${article.title}" class="news-img" onerror="this.src='https://via.placeholder.com/600x300?text=Resim+Yok'">
                 </div>
                 <div class="news-content">
-                    <div class="news-date">
-                        <i class="far fa-clock"></i> ${formatDate(article.publishDate)}
-                    </div>
+                    <div class="news-date"><i class="far fa-clock"></i> ${formatDate(article.publishDate)}</div>
                     <h3 class="news-title">${article.title}</h3>
-                    
-                    <div class="news-text">
-                        ${formattedContent}
-                    </div>
-                    
-                    <div style="margin-top:20px;">
-                        <a href="${linkUrl}" target="_blank" class="read-more">
-                            Kaynağa Git <i class="fas fa-external-link-alt"></i>
-                        </a>
+                    <div class="news-text">${content}</div>
+                    <div style="margin-top:15px;">
+                        <a href="${linkUrl}" target="_blank" class="read-more">Kaynağa Git <i class="fas fa-external-link-alt"></i></a>
                     </div>
                 </div>
             `;
-            
-            // Kartı sayfaya ekle
             grid.appendChild(card);
         });
 
     } catch (error) {
-        console.error('Hata Detayı:', error);
-        grid.innerHTML = '<p style="text-align:center; color:red;">Haberler yüklenirken bir sorun oluştu.</p>';
+        console.error('Hata:', error);
+        // Hatayı ekrana detaylı bas ki görelim
+        grid.innerHTML = `<p style="text-align:center; color:red;">Bir hata oluştu: ${error.message}</p>`;
     }
 }
 
-// --- YARDIMCI TARİH FONKSİYONU ---
 function formatDate(dateString) {
     if(!dateString) return '';
     try {
         const date = new Date(dateString);
-        // Örnek çıktı: 2 Şubat 2026 14:30
-        return date.toLocaleDateString('tr-TR', {
-            day: 'numeric', 
-            month: 'long', 
-            year: 'numeric'
-        }) + ' ' + date.toLocaleTimeString('tr-TR', {
-            hour: '2-digit', 
-            minute:'2-digit'
-        });
-    } catch(e) { 
-        return ''; 
-    }
+        return date.toLocaleDateString('tr-TR', {day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit'});
+    } catch(e) { return ''; }
 }
