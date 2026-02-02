@@ -1,95 +1,117 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Tarihi ayarla
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    // Tarihi güncelle
     const dateEl = document.getElementById('current-date');
-    if (dateEl) dateEl.textContent = new Date().toLocaleDateString('tr-TR', options);
+    if (dateEl) {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateEl.textContent = new Date().toLocaleDateString('tr-TR', options);
+    }
     
     fetchNews();
 });
 
 async function fetchNews() {
     const grid = document.getElementById('news-grid');
-    
+    grid.innerHTML = '<p style="text-align:center;">Haberler yükleniyor...</p>';
+
     try {
-        // Cache önlemek için zaman damgası ekliyoruz
+        // 1. Dosyayı Çek (Cache önlemek için zaman damgası ekledik)
         const response = await fetch('articles.json?t=' + new Date().getTime());
         
         if (!response.ok) {
-            // Dosya yoksa (henüz oluşmadıysa)
-            grid.innerHTML = '<p style="text-align:center;">Henüz haber girilmemiş veya dosya oluşturuluyor.</p>';
-            return;
-        }
-        
-        // JSON'u okumaya çalış
-        let articles;
-        try {
-            articles = await response.json();
-        } catch (e) {
-            throw new Error('JSON dosyası bozuk veya hatalı formatta.');
+            throw new Error(`Dosya bulunamadı! (Hata Kodu: ${response.status})`);
         }
 
-        // Eğer gelen veri liste değilse (örn: { "articlesJsonContent": [...] } ise) düzelt
-        if (!Array.isArray(articles)) {
-            if (articles.articlesJsonContent) {
-                // İç içe geçmiş string ise parse et
+        // 2. Veriyi Oku
+        const rawData = await response.json();
+        console.log("Ham Veri:", rawData); // Konsoldan kontrol etmek için
+
+        // 3. VERİ AVLA (Veri nerede saklanıyor?)
+        let articles = [];
+
+        // SENARYO A: Veri direkt liste olarak gelmiş (En temizi)
+        if (Array.isArray(rawData)) {
+            // Kontrol et: Bu listenin içinde haber mi var, yoksa başka bir paket mi?
+            if (rawData.length > 0 && rawData[0].articlesJsonContent) {
+                // n8n'in yaptığı paketleme hatası: [{ articlesJsonContent: "[...]" }]
                 try {
-                    articles = JSON.parse(articles.articlesJsonContent);
+                    articles = JSON.parse(rawData[0].articlesJsonContent);
                 } catch (e) {
-                    // Belki direkt array'dir ama obje içindedir
-                    articles = Object.values(articles)[0]; 
+                    console.error("Paket açma hatası:", e);
                 }
+            } else {
+                // Direkt haber listesi
+                articles = rawData;
+            }
+        } 
+        // SENARYO B: Veri bir obje olarak gelmiş { "articlesJsonContent": "[...]" }
+        else if (typeof rawData === 'object' && rawData.articlesJsonContent) {
+            try {
+                if (Array.isArray(rawData.articlesJsonContent)) {
+                    articles = rawData.articlesJsonContent;
+                } else {
+                    articles = JSON.parse(rawData.articlesJsonContent);
+                }
+            } catch (e) {
+                console.error("String parse hatası:", e);
             }
         }
 
-        // Hala dizi değilse hata ver
+        // 4. SON KONTROL (Hala liste değilse hata ver)
         if (!Array.isArray(articles)) {
-            console.error('Gelen veri:', articles);
-            throw new Error('Veri formatı hatalı (Liste bekleniyordu).');
+            grid.innerHTML = `<p style="text-align:center; color:red;">Veri formatı hatalı. (Gelen: ${typeof articles})</p>`;
+            return;
         }
-
-        grid.innerHTML = ''; // Yükleniyor yazısını temizle
 
         if (articles.length === 0) {
-            grid.innerHTML = '<p style="text-align:center;">Henüz haber yok.</p>';
+            grid.innerHTML = '<p style="text-align:center;">Henüz haber girilmemiş.</p>';
             return;
         }
 
-        // --- KARTLARI OLUŞTUR ---
+        // 5. KARTLARI BAS (Hata Geçirmez Mod)
+        grid.innerHTML = ''; // Yükleniyor yazısını sil
+
         articles.forEach(article => {
+            // --- GÜVENLİK KONTROLLERİ ---
+            
+            // Link Kontrolü (Dizi mi, yazı mı, null mu?)
+            let safeLink = "#";
+            if (article.originalLink) {
+                if (Array.isArray(article.originalLink)) {
+                    safeLink = article.originalLink[0] || "#";
+                } else if (typeof article.originalLink === 'string') {
+                    safeLink = article.originalLink;
+                }
+            }
+            // Hala bozuksa # yap
+            if (safeLink === "null" || safeLink.startsWith("{") || safeLink.length < 2) safeLink = "#";
+
+            // Resim Kontrolü
+            let safeImage = "https://via.placeholder.com/600x300?text=Gundem";
+            if (article.image) {
+                if (Array.isArray(article.image)) {
+                    safeImage = article.image[0];
+                } else if (typeof article.image === 'string' && article.image.length > 5) {
+                    safeImage = article.image;
+                }
+            }
+
+            // İçerik Kontrolü
+            const safeContent = article.content || "İçerik yüklenemedi.";
+            const safeTitle = article.title || "Yeni Haber";
+
+            // Kartı Oluştur
             const card = document.createElement('div');
             card.className = 'news-card';
-            
-            // 1. GÜVENLİ RESİM KONTROLÜ
-            let imgUrl = article.image;
-            // Dizi geldiyse ilkin al
-            if (Array.isArray(imgUrl)) imgUrl = imgUrl[0];
-            // String değilse veya boşsa placeholder yap
-            if (!imgUrl || typeof imgUrl !== 'string' || imgUrl.length < 5 || imgUrl.startsWith('{')) {
-                imgUrl = 'https://via.placeholder.com/600x300?text=Gundem';
-            }
-
-            // 2. GÜVENLİ LİNK KONTROLÜ (Çökme Engelleyici)
-            let linkUrl = article.originalLink;
-            // Dizi geldiyse ilkini al (Sorunu çözen satır)
-            if (Array.isArray(linkUrl)) linkUrl = linkUrl[0];
-            // String değilse veya boşsa '#' yap
-            if (!linkUrl || typeof linkUrl !== 'string' || linkUrl.length < 2 || linkUrl.startsWith('{')) {
-                linkUrl = '#';
-            }
-
-            // 3. İÇERİK KONTROLÜ
-            const content = article.content || "İçerik bulunamadı.";
-
             card.innerHTML = `
                 <div class="news-img-container">
-                    <img src="${imgUrl}" alt="${article.title}" class="news-img" onerror="this.src='https://via.placeholder.com/600x300?text=Resim+Yok'">
+                    <img src="${safeImage}" alt="${safeTitle}" class="news-img" onerror="this.src='https://via.placeholder.com/600x300?text=Resim+Yok'">
                 </div>
                 <div class="news-content">
                     <div class="news-date"><i class="far fa-clock"></i> ${formatDate(article.publishDate)}</div>
-                    <h3 class="news-title">${article.title}</h3>
-                    <div class="news-text">${content}</div>
+                    <h3 class="news-title">${safeTitle}</h3>
+                    <div class="news-text">${safeContent}</div>
                     <div style="margin-top:15px;">
-                        <a href="${linkUrl}" target="_blank" class="read-more">Kaynağa Git <i class="fas fa-external-link-alt"></i></a>
+                        <a href="${safeLink}" target="_blank" class="read-more">Kaynağa Git <i class="fas fa-external-link-alt"></i></a>
                     </div>
                 </div>
             `;
@@ -97,9 +119,12 @@ async function fetchNews() {
         });
 
     } catch (error) {
-        console.error('Hata:', error);
-        // Hatayı ekrana detaylı bas ki görelim
-        grid.innerHTML = `<p style="text-align:center; color:red;">Bir hata oluştu: ${error.message}</p>`;
+        console.error('Büyük Hata:', error);
+        grid.innerHTML = `<div style="text-align:center; color:red; padding:20px;">
+            <h3>Bir hata oluştu</h3>
+            <p>${error.message}</p>
+            <small>Lütfen geliştirici konsolunu (F12) kontrol edin.</small>
+        </div>`;
     }
 }
 
@@ -107,6 +132,6 @@ function formatDate(dateString) {
     if(!dateString) return '';
     try {
         const date = new Date(dateString);
-        return date.toLocaleDateString('tr-TR', {day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit'});
+        return date.toLocaleDateString('tr-TR', {hour:'2-digit', minute:'2-digit'});
     } catch(e) { return ''; }
 }
