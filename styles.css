@@ -1,265 +1,126 @@
-/* Genel Sıfırlama ve Font Ayarları */
 :root {
-    --primary-color: #0056b3; /* Mavi Tonu */
-    --secondary-color: #f4f4f4; /* Açık Gri */
-    --text-color: #333;
-    --light-text: #fff;
-    --border-color: #ddd;
-    --hover-shadow: rgba(0, 86, 179, 0.2);
+    --primary: #c0392b;
+    --dark: #2c3e50;
+    --light: #f4f4f4;
+    --white: #ffffff;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #ecf0f1;
+    color: #333;
     line-height: 1.6;
-    color: var(--text-color);
-    background-color: #ffffff;
 }
 
 .container {
-    width: 90%;
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
+    padding: 0 20px;
 }
 
-a {
-    text-decoration: none;
-    color: var(--primary-color);
-    transition: color 0.3s ease;
+/* Header */
+header {
+    background: var(--dark);
+    color: var(--white);
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-a:hover {
-    color: #003d80;
-}
-
-/* ========================= */
-/* 1. HEADER VE NAVİGASYON */
-/* ========================= */
-
-.main-header {
-    background-color: var(--primary-color);
-    color: var(--light-text);
-    padding: 15px 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.main-header .container {
+header .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
 }
 
-.logo a {
-    color: var(--light-text);
-    font-size: 1.8rem;
-    font-weight: 800;
-    letter-spacing: 1px;
+.logo h1 { font-size: 1.8rem; }
+.highlight { color: var(--primary); }
+.date-display { font-size: 0.9rem; opacity: 0.8; }
+
+/* Haber Grid Yapısı */
+.section-title {
+    margin-bottom: 1.5rem;
+    border-left: 5px solid var(--primary);
+    padding-left: 10px;
+    color: var(--dark);
 }
 
-.main-nav ul {
-    list-style: none;
-    display: flex;
-}
-
-.main-nav ul li {
-    margin-left: 20px;
-}
-
-.main-nav ul li a {
-    color: var(--light-text);
-    font-weight: 500;
-    padding: 5px 10px;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-}
-
-.main-nav ul li a:hover,
-.main-nav ul li a.active {
-    background-color: rgba(255, 255, 255, 0.15);
-}
-
-/* ========================= */
-/* 2. ANA İÇERİK VE MANŞET */
-/* ========================= */
-
-.content-area {
-    padding: 30px 0;
-}
-
-#hero-banner {
-    background-color: var(--secondary-color);
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 40px;
-    text-align: center;
-    border-left: 5px solid var(--primary-color);
-}
-
-#hero-banner h2 {
-    color: var(--primary-color);
-    font-size: 1.5rem;
-}
-
-/* Haber Kartları Grid Sistemi */
-#news-grid {
+.news-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding-bottom: 50px;
 }
 
+/* Haber Kartı */
 .news-card {
-    background: #fff;
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    overflow: hidden; /* Resmin köşelerini kesmek için */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: var(--white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
     display: flex;
     flex-direction: column;
 }
 
-.news-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px var(--hover-shadow);
-}
+.news-card:hover { transform: translateY(-5px); }
 
-.card-image img {
+.news-img {
     width: 100%;
     height: 200px;
     object-fit: cover;
-    display: block;
 }
 
-.card-content {
-    padding: 15px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
+.news-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+
+.news-date {
+    font-size: 0.8rem;
+    color: #7f8c8d;
+    margin-bottom: 10px;
 }
 
-.card-category {
-    font-size: 0.75rem;
-    font-weight: bold;
-    color: var(--primary-color);
-    text-transform: uppercase;
-    margin-bottom: 5px;
-}
-
-.card-title {
+.news-title {
     font-size: 1.2rem;
     margin-bottom: 10px;
-    line-height: 1.3;
+    color: var(--dark);
+    line-height: 1.4;
 }
 
-.card-summary {
-    font-size: 0.9rem;
+.news-excerpt {
+    font-size: 0.95rem;
     color: #555;
     margin-bottom: 15px;
     flex-grow: 1;
 }
 
-.card-date {
-    font-size: 0.75rem;
-    color: #999;
-    margin-top: auto; /* Tarihi en alta iter */
-    border-top: 1px solid var(--secondary-color);
-    padding-top: 10px;
-}
-
-/* Daha Fazla Yükle Butonu */
-.load-more-container {
-    text-align: center;
-    margin: 40px 0;
-}
-
-.load-more-btn {
-    background-color: var(--primary-color);
-    color: var(--light-text);
-    border: none;
-    padding: 12px 25px;
-    font-size: 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s;
-}
-
-.load-more-btn:hover {
-    background-color: #003d80;
-}
-
-.load-more-btn:active {
-    transform: scale(0.98);
-}
-
-/* ========================= */
-/* 3. FOOTER */
-/* ========================= */
-
-.main-footer {
-    background-color: #222;
-    color: #aaa;
-    padding: 25px 0;
-    text-align: center;
+.read-more {
+    display: inline-block;
+    padding: 8px 15px;
+    background: var(--primary);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 4px;
     font-size: 0.9rem;
+    align-self: flex-start;
 }
 
-.main-footer .footer-links a {
-    color: #aaa;
-    margin: 0 5px;
+.read-more:hover { background: #a93226; }
+
+/* Footer */
+footer {
+    background: var(--dark);
+    color: var(--white);
+    text-align: center;
+    padding: 20px 0;
+    margin-top: auto;
 }
 
-.main-footer .footer-links a:hover {
-    color: var(--primary-color);
-}
+.loading { grid-column: 1 / -1; text-align: center; font-size: 1.2rem; color: #7f8c8d; }
 
-/* ========================= */
-/* 4. MOBİL UYUMLULUK (RESPONSIVE) */
-/* ========================= */
-
-@media (max-width: 768px) {
-    .main-header .container {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .main-nav ul {
-        padding-top: 10px;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .main-nav ul li {
-        margin: 5px 10px;
-    }
-
-    .logo a {
-        margin-bottom: 10px;
-    }
-    
-    /* Grid, mobil cihazlarda tek sütunlu hale gelir (auto-fit sayesinde zaten iyi çalışıyor, ancak daha kesin kontrol için) */
-    #news-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .card-image img {
-        height: 180px;
-    }
-}
-
-@media (max-width: 480px) {
-    .main-nav ul li {
-        width: 45%; /* Butonları daha yan yana sığdırmak için */
-        text-align: center;
-    }
-    
-    .main-nav ul li a {
-        display: block;
-        padding: 8px;
-    }
+/* Mobil Uyumluluk */
+@media (max-width: 600px) {
+    header .container { flex-direction: column; gap: 10px; }
+    .news-grid { grid-template-columns: 1fr; }
 }
