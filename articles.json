@@ -2,8 +2,8 @@
   {
     "title": "Büyükşehir Belediyesi'nden Kent Estetiğine Yönelik Kritik Adım: Tarihi Yapıların Restorasyonu Hız Kesmiyor",
     "content": "Ankara Büyükşehir Belediyesi, kentin kültürel mirasını ve görsel zenginliğini koruma misyonu çerçevesinde, tarihi dokuyu canlandırmaya yönelik restorasyon çalışmalarını kararlılıkla sürdürüyor. Belediyeden yapılan son açıklamada, kent merkezindeki ve çeperlerindeki tescilli yapıların aslına uygun biçimde ayağa kaldırılması sürecinin takvimine sadık kalınarak ilerlediği belirtildi. Bu kapsamda, özellikle cumhuriyet dönemi mimari örnekleri ile geleneksel Ankara evlerinin bakım ve onarım süreçleri önceliklendirilmiş durumda. Uzman ekipler, günümüz tekniklerini geleneksel yapım metotlarıyla harmanlayarak, binaların sadece fiziksel olarak değil, aynı zamanda ruhsal bütünlüklerini de geri kazandırmayı hedefliyor. Çalışmaların temel amacı, gelecek nesillere aktarılacak sağlam bir kültürel miras bırakmak ve kent siluetini bozmadan modern yaşamla tarihi derinliği buluşturmak olarak ifade edildi. Vatandaşlardan gelen olumlu geri bildirimler, belediyenin bu yöndeki çabalarına olan desteği de gözler önüne seriyor. Projeler, sadece binaların görünümünü iyileştirmekle kalmıyor; aynı zamanda bölgedeki sosyal ve ekonomik hayatın canlanmasına da pozitif katkı sağlıyor. Önümüzdeki aylarda tamamlanması beklenen bazı kritik etapların, başkentin turizm potansiyelini de önemli ölçüde artırması bekleniyor.",
-    "image": "{ $json.image && $json.image.startsWith('http') ? $json.image : ($json.image ? 'https://www.medyaradar.com' + $json.image : '') }",
+    "image": "https://via.placeholder.com/800x400?text=Haber+Resmi",
     "publishDate": "2026-02-02T14:35:37.835Z",
-    "originalLink": "[]"
+    "originalLink": "#"
   }
 ]
