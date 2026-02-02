@@ -3,68 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Güncel Haberler - Türkiye'nin En Yeni Haber Kaynağı</title>
-    <!-- SEO Meta Etiketleri -->
-    <meta name="description" content="Türkiye ve dünyadan en güncel, son dakika haberleri, ekonomi, siyaset, spor ve teknoloji gelişmeleri tek adreste.">
-    <meta name="keywords" content="haber, son dakika, güncel, türkiye, politika, ekonomi, spor">
-    <meta name="author" content="Uzman Web Geliştirici">
+    <title>Haber Merkezi | Son Dakika Haberler ve Gelişmeler</title>
+    
+    <!-- SEO Meta Etiketleri (Turkish) -->
+    <meta name="description" content="Türkiye ve dünyadan en güncel, son dakika haberleri, analizler ve özel içerikler. Teknoloji, spor, ekonomi ve kültür sanat haberleri burada.">
+    <meta name="keywords" content="son dakika, haberler, güncel haberler, spor, ekonomi, teknoloji, türkiye haber">
+    <meta name="author" content="Haber Merkezi Geliştirme Ekibi">
+    <link rel="canonical" href="https://www.habermerkezi.com">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="Haber Merkezi | Son Dakika Haberler">
+    <meta property="og:description" content="Türkiye ve dünyadan en güncel, son dakika haberleri.">
+    <meta property="og:type" content="website">
+    
+    <!-- Favicon (Placeholder) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📰</text></svg>">
+    
+    <!-- Stylesheet -->
     <link rel="stylesheet" href="styles.css">
-    <!-- Google Fonts: Roboto or similar clean font -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- Başlık Kısmı (Header) -->
-    <header class="site-header">
-        <div class="container header-content">
-            <div class="logo">
-                <h1><a href="index.html">GÜNDEM 24</a></h1>
-            </div>
+    <!-- Üst Kısım (Header) -->
+    <header class="main-header">
+        <div class="container">
+            <h1 class="logo"><a href="/">HABER MERKEZİ</a></h1>
             <nav class="main-nav">
                 <ul>
                     <li><a href="#anasayfa" class="active">Ana Sayfa</a></li>
-                    <li><a href="#">Ekonomi</a></li>
-                    <li><a href="#">Siyaset</a></li>
-                    <li><a href="#">Spor</a></li>
-                    <li><a href="#">Teknoloji</a></li>
-                    <li><a href="#">Yazarlar</a></li>
+                    <li><a href="#guncel">Güncel</a></li>
+                    <li><a href="#spor">Spor</a></li>
+                    <li><a href="#teknoloji">Teknoloji</a></li>
+                    <li><a href="#iletisim">İletişim</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <main class="container">
-        <!-- Ana İçerik Alanı -->
-        <section id="haberler-listesi" class="news-grid">
-            <!-- Haber kartları JavaScript ile buraya eklenecek -->
-            <h2 class="section-title">Günün Öne Çıkan Başlıkları</h2>
+    <!-- Ana İçerik Alanı -->
+    <main class="container content-area">
+        
+        <!-- Manşet Alanı -->
+        <section id="hero-banner">
+            <h2>Günün Öne Çıkan Başlıkları</h2>
+            <!-- Buraya dinamik olarak en önemli haber eklenebilir -->
         </section>
 
-        <!-- Dinamik Haber Ekleme Alanı (Geliştirici Amaçlı) -->
-        <section class="dev-tools">
-            <h3>Geliştirici Paneli (JS ile yeni haber ekle)</h3>
-            <button id="addArticleBtn">Rastgele Yeni Haber Ekle</button>
+        <!-- Haber Kartları Grid Alanı -->
+        <section id="news-grid">
+            <!-- Haber kartları JavaScript ile buraya yüklenecek -->
         </section>
+
+        <!-- Daha Fazla Yükle Butonu (Opsiyonel) -->
+        <div class="load-more-container">
+            <button id="loadMoreBtn" class="load-more-btn">Daha Fazla Haber Yükle</button>
+        </div>
     </main>
 
     <!-- Alt Bilgi (Footer) -->
-    <footer class="site-footer">
-        <div class="container footer-content">
-            <div class="footer-info">
-                <h4>Gündem 24 Haber Portalı</h4>
-                <p>&copy; 2024 Tüm Hakları Saklıdır.</p>
-                <p>İletişim: info@gundem24.com</p>
-            </div>
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; <span id="currentYear"></span> Haber Merkezi. Tüm Hakları Saklıdır.</p>
             <div class="footer-links">
-                <ul>
-                    <li><a href="#">Künye</a></li>
-                    <li><a href="#">Gizlilik Politikası</a></li>
-                    <li><a href="#">Kullanım Koşulları</a></li>
-                </ul>
+                <a href="#">Künye</a> |
+                <a href="#">Gizlilik Politikası</a> |
+                <a href="#">Yayın İlkeleri</a>
             </div>
         </div>
     </footer>
 
+    <!-- JavaScript -->
     <script src="script.js"></script>
 </body>
 </html>
